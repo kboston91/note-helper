@@ -1,8 +1,15 @@
-let noteTitle;
-let noteText;
-let saveNoteBtn;
-let newNoteBtn;
-let noteList;
+// const express = require('express');
+// // const app = express();
+// const path = require('path');
+// // const notes = require('./public/notes.html');
+// const fs = require("fs");
+// const PORT = 3001;
+
+let noteTitle 
+let noteText 
+let saveNoteBtn
+let newNoteBtn 
+let noteList 
 
 if (window.location.pathname === '/notes') {
   noteTitle = document.querySelector('.note-title');
@@ -11,6 +18,7 @@ if (window.location.pathname === '/notes') {
   newNoteBtn = document.querySelector('.new-note');
   noteList = document.querySelectorAll('.list-container .list-group');
 }
+
 
 // Show an element
 const show = (elem) => {
@@ -71,6 +79,7 @@ const handleNoteSave = () => {
     title: noteTitle.value,
     text: noteText.value,
   };
+  console.log(newNote);
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
