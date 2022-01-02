@@ -12,32 +12,8 @@ const PORT = 3001;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static("public"));
 
-// Data
-// =============================================================
-const characters = [
-  {
-    routeName: "yoda",
-    name: "Yoda",
-    role: "Jedi Master",
-    age: 900,
-    forcePoints: 2000,
-  },
-  {
-    routeName: "darthmaul",
-    name: "Darth Maul",
-    role: "Sith Lord",
-    age: 200,
-    forcePoints: 1200,
-  },
-  {
-    routeName: "obiwankenobi",
-    name: "Obi Wan Kenobi",
-    role: "Jedi Master",
-    age: 55,
-    forcePoints: 1350,
-  },
-];
 
 // Routes
 // =============================================================
@@ -47,17 +23,19 @@ app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
+app.get("", (req, res) => {
+  console.log("in the slash route");
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
 app.get("/api/notes", (req, res) => {
-   fs.readFile("./db/db.json", "utf8", function (error, dbData) {
+  fs.readFile("./db/db.json", "utf8", function (error, dbData) {
     if (error) {
       return console.log(error);
     }
     console.log(dbData);
     return res.json(dbData);
   });
-
-  
-  
 });
 
 // app.get('/api/characters/:character', (req, res) => {
@@ -76,23 +54,42 @@ app.get("/api/notes", (req, res) => {
 
 app.post("/api/notes", (req, res) => {
   const newNote = req.body;
-  // fs.readFile("./db/db.json", "utf8", function (error, dbData) {
-  //   if (error) {
-  //     return console.log(error);
-  //   }
-  //   console.log(dbData);
-  //   return res.json(dbData);
-  // });
-  console.log(newNote);
+  console.log("in the post route");
+  fs.readFile("./db/db.json", "utf8", function (error, dbData) {
+    if (error) {
+      return console.log(error);
+    }
+    var parsedDbData = JSON.parse(dbData);
+
+    console.log(dbData);
+    console.log(dbData.length);
+    parsedDbData.push(req.body);
+    console.log(parsedDbData);
+
+    fs.writeFile("./db/db.json", JSON.stringify(parsedDbData), (err) => {
+      if (err) throw new Error(err);
+    });
+    res.json(parsedDbData);
+  });
+  // console.log(newNote);
 
   // characters.push();
-
-  res.json();
 });
 
 app.get("*", (req, res) => {
+  console.log("console log 99");
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
+
+app.delete('/api/notes/:id', (req, res) => {
+ const deletNote = (req.params.id);
+    res.json(notes);
+
+    // fs.writeFile("./db/db.json", JSON.stringify(deleteDbData), (err) => {
+    //   if (err) throw new Error(err);
+    // });
+    // res.json(deleteDbData);
+  });
 
 // Listener
 // =============================================================
